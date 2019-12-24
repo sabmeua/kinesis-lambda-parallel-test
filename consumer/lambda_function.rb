@@ -11,7 +11,9 @@ def main(event:, context:)
     'start' => Time.now.to_s
   }
   event['Records'].each do |rec|
-    items['records'] << Base64.decode64(rec['kinesis']['data']).to_i
+    client_no = rec['kinesis']['partitionKey']
+    data_no = Base64.decode64(rec['kinesis']['data']).to_i
+    items['records'] << "#{client_no}-#{data_no}"
     sleep 3
   end
   items['end'] = Time.now.to_s

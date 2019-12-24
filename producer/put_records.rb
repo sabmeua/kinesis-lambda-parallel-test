@@ -5,15 +5,17 @@ Dotenv.load
 
 kinesis = Aws::Kinesis::Client.new(region: ENV['AWS_DEFAULT_REGION'], profile: ENV['AWS_PROFILE'])
 
-CNT = ARGV[0] || 300
+DATA_CNT = (ARGV[0] || 60).to_i
 STREAM_NAME = ENV['TEST_STREAM_NAME']
-PKEY = 'client-001'
+CLIENT_NUM = 5
 
-CNT.to_i.times do |i|
-  kinesis.put_record(
-    stream_name: STREAM_NAME,
-    data: (i+1).to_s,
-    partition_key: PKEY
-  )
+1.step(DATA_CNT) do |i|
+  1.step(CLIENT_NUM) do |j|
+    kinesis.put_record(
+      stream_name: STREAM_NAME,
+      data: i.to_s,
+      partition_key: j.to_s
+    )
+  end
   sleep 1
 end
